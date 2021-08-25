@@ -17,7 +17,9 @@ void print_proc_name() {
         char proc_name[PATH_MAX];
 
         // Get program counter
-        unw_get_reg(&cursor, UNW_REG_IP, &pc);
+        if (unw_get_reg(&cursor, UNW_REG_IP, &pc)) {
+            assert(0);
+        }
 
         // Get procedure name that produced stack frame identified by cursor
         if (unw_get_proc_name(&cursor, proc_name, PATH_MAX, &offset)) {
