@@ -7,7 +7,7 @@ Some programs requires https://github.com/libunwind/libunwind/pull/299
 ## Build libunwind
 ```
 autoreconf -i
-./configure --prefix=$HOME/tmp/libunwind
+./configure CFLAGS="-g -O0" CXXFLAGS="-g -O0" --prefix=$HOME/tmp/libunwind
 make
 make install
 ```
@@ -15,9 +15,21 @@ make install
 ## Build examples
 ```
 cd examples
-CFLAGS="-I$HOME/tmp/libunwind/include -O0 -g -Wall" \
-  LDFLAGS="-L$HOME/tmp/libunwind/lib -Wl,-rpath,$HOME/tmp/libunwind/lib" \
-  make
+make
+```
+
+## Bisect issue
+```
+cd <libunwind>
+
+# Current version is bad, and there is a known good version
+git bisect start
+git bisect bad HEAD
+git bisect good 0dae46e9723953f461dd0f782cf2d35b6a8a28d5
+git bisect run <repo-path>/libunwind-experiments/bisect/build-and-run-valgrind.sh
+
+git bisect log
+git bisect reset
 ```
 
 `unw_get_proc_name_by_ip__dynamic` not working as expected, due to:
